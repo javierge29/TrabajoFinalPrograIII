@@ -37,7 +37,7 @@ public class Model {
         guardar();
     }
 
-    public void modifyQuestion(Question q) throws RepositoryException{
+    public Question modifyQuestion(Question q) throws RepositoryException{
         Question modificada=repositorio.modifyQuestion(q);
         guardar();
         return modificada;

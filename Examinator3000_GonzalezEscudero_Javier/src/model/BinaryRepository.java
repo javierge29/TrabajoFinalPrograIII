@@ -46,9 +46,9 @@ public class BinaryRepository implements IRepository{
     }
 
     @Override
-    public Question modifyQuestion(Quesion q) throws RepositoryException{
+    public Question modifyQuestion(Question q) throws RepositoryException{
         for(int i=0; i<preguntas.size();i++){
-            if(preguntas.get(i).getId().equals(.getId())){
+            if(preguntas.get(i).getId().equals(q.getId())){
                 preguntas.set(i, q);
                 return q;
             }   

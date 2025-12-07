@@ -1,5 +1,222 @@
 package view;
 
-public class InteractiveView {
+import java.util.Scanner;
+import java.util.List;
+import java.util.HashSet;
+import java.util.ArrayList;
+
+import controller.Controller;
+import model.Option;
+import model.Question;
+import model.RepositoryException;
+
+public class InteractiveView extends BaseView{
+    private Scanner sc=new Scanner(System.in);
+
+    @Override
+    public void init(){
+        showMessage("Bienvenido a Examinator 3000");
+        boolean ejec=true;
+        while(ejec){
+            showMessage("\nMenú principal:");
+            showMessage("1. CRUD Preguntas");
+            showMessage("0. Salir");
+            
+            int opc=leerInt("Elegir opción:");
+            switch(opc){
+                case 1:
+                    menuCrud();
+                    break;
+                case 0:
+                    ejec=false;
+                    break;
+                default:
+                    showErrorMessage("Opcion no valida");
+            }
+        }
+    }
+     
+    private void menuCrud(){
+        boolean enCrud=true;
+        while(enCrud){
+            showMessage("\nMenú CRUD:");
+            showMessage("1. Crear una nueva pregunta");
+            showMessage("2. Listar todas (ordenadas por fecha)");
+            showMessage("3. Listar por tema");
+            showMessage("0. Volver");
+            int opc=leerInt("Elige opción: ");
+            switch (opc){
+                case 1:
+                    crearPregunta();
+                    break;
+                case 2:
+                    listarTodas();
+                    break;
+                case 3:
+                    listarPorTema();
+                    break;
+                case 0:
+                    enCrud=false;
+                    break;
+                default:
+                    showErrorMessage("Opción no valida");
+            }
+        }
+    }
     
+    private void crearPregunta(){
+        try {
+            String autor=leerString("Autor: ");
+            HashSet<String> temas=new HashSet<>();
+            temas.add(leerString("Tema: "));
+            String enunciado=leerString("Enunciado: ");
+            List<Option> opciones=new ArrayList<>();
+            for(int i=1;i<=4;i++){
+                String texto=leerString("Opción: " + i + "texto: ");
+                String justificacion=leerString("Justificación " + i + ": ");
+                boolean esCorrecta=leerBooleano("Es correcta? (true/false): ");
+                opciones.add(new Option(texto, justificacion, esCorrecta));
+            }
+            Question pregunta=new Question(autor, temas, enunciado, opciones);
+            controller.createQuestion(pregunta);
+            showMessage("Pregunta creada: " + pregunta) ;
+        } catch (RepositoryException | IllegalArgumentException e) {
+            showErrorMessage(e.getMessage());
+        }
+    }
+
+    private void listarTodas(){
+        try {
+            List<Question> preguntas=controller.listAllQuestions();
+            if(preguntas.isEmpty()){
+                showMessage("No hay preguntas");
+                return;
+            }
+            showMessage("Listado completo:");
+            for(int i=0;i<preguntas.size();i++)
+                showMessage((i+1) + ". " + preguntas.get(i));
+            int indice=leerInt("Elegir número para detalle (0 para volver): ")-1;
+            if(indice<=0 && indice<preguntas.size())
+                mostrarDetalle(preguntas.get(indice));
+        } catch (RepositoryException e) {
+            showErrorMessage(e.getMessage());
+        }
+    }
+
+    private void listarPorTema(){
+        String tema=leerString("Tema a filtrar: ");
+        try {
+            List<Question> preguntas=controller.listQuestionByTopic(tema);
+            if(preguntas.isEmpty()){
+                showMessage("No hay preguntas para " + tema);
+                return;
+            }
+            showMessage("Listado por tema " + tema + ":");
+            for(int i=0;i<preguntas.size();i++)
+                showMessage((i+1) + ". " + preguntas.get(i));
+            int indice=leerInt("Elige número para detalle (0 para volver): ")-1;
+            if(indice>=0 && indice<preguntas.size())
+                mostrarDetalle(preguntas.get(indice));
+        } catch (RepositoryException e) {
+            showErrorMessage(e.getMessage());
+        }
+    }
+
+    private void mostrarDetalle(Question pregunta){
+        showMessage("\nDetalle de pregunta:");
+        showMessage(pregunta.toString());
+        showMessage("Opciones:");
+        for(Option opcion : pregunta.getOpcion())
+            showMessage("- " + opcion);
+        showMessage("1. Modificar");
+        showMessage("2. Eliminar");
+        showMessage("0. Volver");
+        int opc=leerInt("Elige: ");
+        switch (opc) {
+            case 1:
+                modificarPregunta(pregunta);
+                break;
+            case 2:
+                eliminarPregunta(pregunta);
+                break;
+        }
+    }
+
+    private void modificarPregunta(Question pregunta){
+        try {
+            pregunta.setAutor(leerString("Nuevo autor (" + pregunta.getAutor() + "): "));
+            HashSet<String> nuevosTemas=new HashSet<>();
+            nuevosTemas.add(leerString("Nuevo tema: "));
+            pregunta.setTemas(nuevosTemas);
+            pregunta.setEnunciado(leerString("Nuevo enunciado (" + pregunta.getEnunciado() + "): "));
+            List<Option> nuevasOpciones=new ArrayList<>();
+            for(int i=1;i<=4;i++){
+                String texto=leerString("Nueva opción " + i + "texto: ");
+                String justificacion=leerString("Justifiación " + i + ": ");
+                boolean esCorrecta=leerBooleano("Correcto? (true/false): ");
+                nuevasOpciones.add(new Option(texto, justificacion, esCorrecta));
+            }
+            pregunta.setOpcion(nuevasOpciones);
+            controller.updateQuestion(pregunta);
+            showMessage("Pregunta modificada");
+        } catch (RepositoryException | IllegalArgumentException e) {
+            showErrorMessage(e.getMessage());
+        }
+    }
+
+    private void eliminarPregunta(Question pregunta){
+        if(leerBooleano("Confirmar eliminar pregunta? (true/false): ")){
+            try {
+                controller.deleteQuestion(pregunta);
+                showMessage("Pregunta eliminada");
+            } catch (RepositoryException e) {
+                showErrorMessage(e.getMessage());
+            }
+        }
+    }
+
+    @Override
+    public void showMessage(String msg){
+        System.out.println(msg);
+    }
+
+    @Override
+    public void showErrorMessage(String msg){
+        System.err.println("ERROR: " + msg);
+    }
+
+    @Override
+    public void end(){
+        showMessage("Cerrnado programa...");
+        sc.close();
+    }
+
+    private String leerString(String msg){
+        showMessage(msg);
+        return sc.nextLine();
+    }
+
+    private int leerInt(String msg){
+        showMessage(msg);
+        while(!sc.hasNextInt()){
+            showErrorMessage("Entrada invalida");
+            sc.next();
+            showMessage(msg);
+        }
+        int valor=sc.nextInt();
+        sc.nextLine();
+        return valor;
+    }
+
+    private boolean leerBooleano(String msg){
+        showMessage(msg);
+        while(!sc.hasNextBoolean()){
+            showErrorMessage("Entrada invalida (true/false)");
+            sc.next();
+            showMessage(msg);
+        }
+        boolean valor=sc.nextBoolean();
+        sc.nextLine();
+        return valor;
+    }
 }
