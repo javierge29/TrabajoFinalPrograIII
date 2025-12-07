@@ -1,6 +1,8 @@
 package model;
 
-public class Option {
+import java.io.Serializable;
+
+public class Option implements Serializable{
     private String texto;
     private String justificacion;
     private boolean esCorrecta;

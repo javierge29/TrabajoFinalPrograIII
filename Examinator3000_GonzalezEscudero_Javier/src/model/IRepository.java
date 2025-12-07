@@ -1,5 +1,7 @@
 package model;
 
+import java.util.List;
+
 public class IRepository {
     Question addQuestion(Question q) throws RepositoryException;
     void removeQuestion(Question q) throws RepositoryException;

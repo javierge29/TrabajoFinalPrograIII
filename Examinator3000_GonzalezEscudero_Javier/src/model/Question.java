@@ -3,10 +3,11 @@ package model;
 import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class Question {
+public class Question implements Serializable{
     private UUID id=UUID.randomUUID();
     private String autor;
     private HashSet<String> temas=new HashSet<>();
