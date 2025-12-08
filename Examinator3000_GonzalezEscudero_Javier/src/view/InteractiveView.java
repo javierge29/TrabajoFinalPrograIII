@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import controller.Controller;
 import model.Option;
 import model.Question;
+import model.QuestionBackupIOException;
 import model.RepositoryException;
 
 public class InteractiveView extends BaseView{
@@ -20,12 +21,16 @@ public class InteractiveView extends BaseView{
         while(ejec){
             showMessage("\nMenú principal:");
             showMessage("1. CRUD Preguntas");
+            showMessage("2. Exportar/Importar archivo .JSON");
             showMessage("0. Salir");
             
             int opc=leerInt("Elegir opción:");
             switch(opc){
                 case 1:
                     menuCrud();
+                    break;
+                case 2:
+                    menuBackup();
                     break;
                 case 0:
                     ejec=false;
@@ -57,6 +62,42 @@ public class InteractiveView extends BaseView{
                     break;
                 case 0:
                     enCrud=false;
+                    break;
+                default:
+                    showErrorMessage("Opción no valida");
+            }
+        }
+    }
+
+    private void menuBackup(){
+        boolean enBackup=true;
+        while(enBackup){
+            showMessage("\nMenú Backup:");
+            showMessage("1. Exportar a .JSON");
+            showMessage("2. Importar de .JSON");
+            showMessage("0. Volver");
+            int opc=leerInt("Elige opción: ");
+            switch (opc){
+                case 1:
+                    String exportarFile=leerString("Nombre del archivo (.json) que deseas exportar: ");
+                    try {
+                        controller.exportQuestion(exportarFile);
+                        showMessage("Exportado con éxito a ~/" + exportarFile);
+                    } catch (QuestionBackupIOException | RepositoryException e) {
+                        showErrorMessage(e.getMessage());
+                    }
+                    break;
+                case 2:
+                    String importarFile=leerString("Nombre de archivo (.json) que deseas importar: ");
+                    try {
+                        controller.importQuestion(importarFile);
+                        showMessage("Importado con éxito desde ~/" + importarFile);
+                    } catch (QuestionBackupIOException | RepositoryException e) {
+                        showErrorMessage(e.getMessage());
+                    }
+                    break;
+                case 0:
+                    enBackup=false;
                     break;
                 default:
                     showErrorMessage("Opción no valida");

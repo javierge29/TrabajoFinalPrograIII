@@ -2,6 +2,7 @@ package controller;
 
 import model.Model;
 import model.Question;
+import model.QuestionBackupIOException;
 import model.RepositoryException;
 import view.BaseView;
 import java.util.List;
@@ -56,5 +57,13 @@ public class Controller {
 
     public List<Question> listQuestionByTopic(String tema) throws RepositoryException{
         return model.getQuestionsByTopic(tema);
+    }
+
+    public void exportQuestion(String fileName) throws QuestionBackupIOException, RepositoryException{
+        model.exportQuestion(fileName);
+    }
+
+    public void importQuestion(String fileName) throws QuestionBackupIOException, RepositoryException{
+        model.importQuestion(fileName);
     }
 }

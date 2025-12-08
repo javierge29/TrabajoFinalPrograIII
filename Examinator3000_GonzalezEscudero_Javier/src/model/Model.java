@@ -58,4 +58,25 @@ public class Model {
         }
         return filtradas;
     }
+
+    public void exportQuestion(String fileName) throws QuestionBackupIOException, RepositoryException{
+        List<Question> all=getAllQuestions();
+        backup.exportQuestion(all, fileName);
+    }
+
+    public void importQuestion(String fileName) throws QuestionBackupIOException, RepositoryException{
+        List<Question> importado=backup.importQuestion(fileName);
+        for(Question q : importado){
+            boolean existe=false;
+            for(Question exists : getAllQuestions()){
+                if(exists.getId().equals(q.getId())){
+                    existe=true;
+                    break;
+                }
+            }
+            if(!existe){
+                addQuestion(q);
+            }
+        }
+    }
 }
