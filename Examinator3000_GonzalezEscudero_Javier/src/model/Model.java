@@ -1,6 +1,7 @@
 package model;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 public class Model {
@@ -78,5 +79,28 @@ public class Model {
                 addQuestion(q);
             }
         }
+    }
+    
+    public List<String> getAllTemas() throws RepositoryException{
+        HashSet<String> temas=new HashSet<>();
+        for(Question q : getAllQuestions()){
+            temas.addAll(q.getTemas());
+        }
+
+        return new ArrayList<>(temas);
+    }
+
+    public Examen crearExamen(String tema, int n) throws RepositoryException{
+        List<Question> disponibles;
+        if("todos".equalsIgnoreCase(tema)){
+            disponibles=getAllQuestions();
+        }else{
+            disponibles=getQuestionsByTopic(tema);
+        }
+        if(n<1 || n>disponibles.size()){
+            throw new IllegalArgumentException("N inválido");
+        }
+        List<Question> seleccionadas=Examen.seleccionarPreguntas(disponibles, n);
+        return new Examen(tema, seleccionadas);
     }
 }

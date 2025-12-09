@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.ArrayList;
 
 import controller.Controller;
+import model.Examen;
 import model.Option;
 import model.Question;
 import model.QuestionBackupIOException;
@@ -22,6 +23,7 @@ public class InteractiveView extends BaseView{
             showMessage("\nMenú principal:");
             showMessage("1. CRUD Preguntas");
             showMessage("2. Exportar/Importar archivo .JSON");
+            showMessage("3. Modo examen");
             showMessage("0. Salir");
             
             int opc=leerInt("Elegir opción:");
@@ -31,6 +33,9 @@ public class InteractiveView extends BaseView{
                     break;
                 case 2:
                     menuBackup();
+                    break;
+                case 3:
+                    modoExamen();
                     break;
                 case 0:
                     ejec=false;
@@ -102,6 +107,47 @@ public class InteractiveView extends BaseView{
                 default:
                     showErrorMessage("Opción no valida");
             }
+        }
+    }
+
+    private void modoExamen(){
+        try {
+            List<String> temas=controller.getAllTemas();
+            showMessage("Temas disponibles:");
+            for(int i=0;i<temas.size();i++){
+                showMessage((i+1) + ". " + temas.get(i));
+            }
+            showMessage((temas.size() + 1) + ". Todos");
+            int indice=leerInt("Elegir tema: ") - 1;
+            String tema=(indice==temas.size()) ? "todos" : temas.get(indice);
+            List<Question> disponibles=(temas.equals("todos")) ? controller.listAllQuestions() : controller.listQuestionByTopic(tema);
+            int maxN=disponibles.size();
+            int n=leerInt("Número de preguntas (1-" + maxN + "): ");
+            Examen examen=controller.crearExamen(tema, n);
+
+            for(int i=0;i<examen.getPreguntas().size();i++){
+                Question q=examen.getPreguntas().get(i);
+                showMessage("Pregunta " + ((i+1) + ": " + q.getEnunciado()));
+                List<Option> opciones=q.getOpcion();
+                for(int j=0;j<opciones.size();j++){
+                    showMessage((j+1) + ". " + opciones.get(j).getTexto());
+                }
+                int resp=leerInt("Respuesta (1-4, 0 para saltar): ");
+                if(resp!=0){
+                    examen.responder(i, resp-1);
+                    showMessage(examen.getFeedback(i));
+                }
+            }
+
+            examen.finalizar();
+            showMessage("Resultado:");
+            showMessage("Nota: " + examen.calcularNota());
+            showMessage("Acertadas: " + examen.getAciertos());
+            showMessage("Falladas: " + examen.getFallos());
+            showMessage("No contestadas: " + examen.getEnBlanco());
+            showMessage("Tiempo: " + examen.getTiempo() + " segundos");
+        } catch (RepositoryException | IllegalArgumentException e) {
+            showErrorMessage(e.getMessage());
         }
     }
     

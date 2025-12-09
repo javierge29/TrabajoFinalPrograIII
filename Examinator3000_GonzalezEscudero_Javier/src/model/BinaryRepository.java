@@ -17,7 +17,9 @@ public class BinaryRepository implements IRepository{
         File archivo=new File(RUTA_ARCHIVO);
         if (archivo.exists()){
             try(ObjectInputStream ois=new ObjectInputStream(new FileInputStream(archivo))){
-                preguntas=(ArrayList<Question>) ois.readObject();
+                @SuppressWarnings("unchecked")
+                List<Question> preguntasCargadas=(ArrayList<Question>) ois.readObject();
+                preguntas=preguntasCargadas;
             }catch(IOException | ClassNotFoundException e){
                 throw new RepositoryException("Error al intentar cargar preguntas binarias", e);
             }

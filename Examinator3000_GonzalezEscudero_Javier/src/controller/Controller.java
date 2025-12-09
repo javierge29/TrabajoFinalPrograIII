@@ -1,5 +1,6 @@
 package controller;
 
+import model.Examen;
 import model.Model;
 import model.Question;
 import model.QuestionBackupIOException;
@@ -65,5 +66,13 @@ public class Controller {
 
     public void importQuestion(String fileName) throws QuestionBackupIOException, RepositoryException{
         model.importQuestion(fileName);
+    }
+
+    public List<String> getAllTemas() throws RepositoryException{
+        return model.getAllTemas();
+    }
+
+    public Examen crearExamen(String tema, int n) throws RepositoryException{
+        return model.crearExamen(tema, n);
     }
 }

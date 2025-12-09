@@ -1,7 +1,14 @@
 {
-    "java.project.sourcePaths": ["src"],
+    "java.project.sourcePaths": [
+        "src"
+    ],
     "java.project.outputPath": "bin",
     "java.project.referencedLibraries": [
-        "lib/**/*.jar"
+        "lib\\biblioteca11 (1).jar",
+        "lib\\gson-2.10.1.jar",
+        "lib\\jadapter-for-native-tts-0.12.0.jar",
+        "c:\\Users\\gejav\\OneDrive\\Documentos\\2 Ing Inf\\Programación\\TrabajoFinal\\TrabajoFinalPrograIII\\Examinator3000_GonzalezEscudero_Javier\\lib\\gson-2.10.1.jar",
+        "c:\\Users\\gejav\\OneDrive\\Documentos\\2 Ing Inf\\Programación\\TrabajoFinal\\TrabajoFinalPrograIII\\Examinator3000_GonzalezEscudero_Javier\\lib\\jadapter-for-native-tts-0.12.0.jar",
+        "c:\\Users\\gejav\\OneDrive\\Documentos\\2 Ing Inf\\Programación\\TrabajoFinal\\TrabajoFinalPrograIII\\Examinator3000_GonzalezEscudero_Javier\\lib\\biblioteca11 (1).jar"
     ]
 }
