@@ -21,7 +21,7 @@ public class App {
         QuestionBackupIO backup=new JSONQuestionBackupIO();
         List<QuestionCreator> questionCreators=new ArrayList<>();
 
-        /*for(int i=0;i<args.length;i++){
+        for(int i=0;i<args.length;i++){
             if(args[i].equals("-question-creator") && i+2<args.length){
                 String modelId=args[i+1];
                 String apiKey=args[i+2];
@@ -30,7 +30,7 @@ public class App {
                 }
                 i+=2;
             }
-        }*/
+        }
 
         Model model=new Model(repository, backup, questionCreators);
 

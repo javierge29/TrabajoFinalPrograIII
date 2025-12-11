@@ -1,6 +1,6 @@
 package model;
 
-public class QuestionCreator {
+public interface QuestionCreator {
     Question crearQuestion(String tema) throws QuestionCreatorException;
     String getQuestionCreatorDesc();
 }
