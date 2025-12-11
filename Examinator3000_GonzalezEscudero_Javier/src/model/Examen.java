@@ -103,10 +103,15 @@ public class Examen {
     }
 
     public static List<Question> seleccionarPreguntas(List<Question> disponibles, int n){
-        List<Question> seleccionadas=new ArrayList<>(disponibles);
+        if(disponibles.size()<n){
+            throw new IllegalArgumentException("No hay suficientes preguntas disponibles");
+        }
+        List<Question> seleccionadas=new ArrayList<>();
+        List<Question> copia=new ArrayList<>(disponibles);
         Random random=new Random();
-        while (seleccionadas.size()>n) {
-            seleccionadas.remove(random.nextInt(seleccionadas.size()));
+        for(int i=0;i<n;i++){
+            int indice=random.nextInt(copia.size());
+            seleccionadas.add(copia.remove(indice));
         }
 
         return seleccionadas;

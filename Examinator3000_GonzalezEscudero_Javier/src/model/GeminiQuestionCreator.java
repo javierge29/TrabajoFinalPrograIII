@@ -32,12 +32,12 @@ public class GeminiQuestionCreator implements QuestionCreator{
                 Gson gson=new Gson();
                 QuestionDTO dto=gson.fromJson(json, QuestionDTO.class);
 
-                HashSet<String> temas=new HashSet<>(dto.temas);
+                HashSet<String> temas=new HashSet<>(dto.topics);
                 List<Option> opciones=new ArrayList<>();
-                for(OptionDTO opc : dto.opciones){
-                    opciones.add(new Option(opc.texto, opc.justificacion, opc.esCorrecta));
+                for(OptionDTO opc : dto.options){
+                    opciones.add(new Option(opc.text, opc.rationale, opc.correct));
                 }
-                return new Question(dto.autor, temas, dto.enunciado, opciones);
+                return new Question(dto.author, temas, dto.statement, opciones);
             }
         } catch (Exception e) {
             throw new QuestionCreatorException("Error con Gemini", e);
@@ -53,14 +53,14 @@ public class GeminiQuestionCreator implements QuestionCreator{
 }
 
 class QuestionDTO{
-    String autor;
-    List<String> temas;
-    String enunciado;
-    List<OptionDTO> opciones;
+    String author;
+    List<String> topics;
+    String statement;
+    List<OptionDTO> options;
 }
 
 class OptionDTO{
-    String texto;
-    String justificacion;
-    boolean esCorrecta;
+    String text;
+    String rationale;
+    boolean correct;
 }

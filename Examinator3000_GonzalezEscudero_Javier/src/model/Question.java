@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class Question implements Serializable{
+    private static final long serialVersionUID=1L;
     private UUID id=UUID.randomUUID();
     private String autor;
     private HashSet<String> temas=new HashSet<>();
