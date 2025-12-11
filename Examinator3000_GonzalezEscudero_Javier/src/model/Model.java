@@ -103,4 +103,30 @@ public class Model {
         List<Question> seleccionadas=Examen.seleccionarPreguntas(disponibles, n);
         return new Examen(tema, seleccionadas);
     }
+
+    public boolean hasQuestionCreator(){
+        return !questionCreators.isEmpty();
+    }
+
+    public List<String> getQuestionCreatorDescripcion(){
+        List<String> desc=new ArrayList<>();
+        for(QuestionCreator c :questionCreators){
+            desc.add(c.getQuestionCreatorDesc());
+        }
+
+        return desc;
+    }
+
+    public Question generarPregunta(String tema, int indice) throws QuestionCreatorException, RepositoryException{
+        if(indice<0 || indice>=questionCreators.size()){
+            throw new QuestionCreatorException("índice no válido");
+        }
+        QuestionCreator creator=questionCreators.get(indice);
+        Question q=creator.crearQuestion(tema);
+        return q;
+    }
+
+    public void addGeneratedQuestion(Question q) throws RepositoryException{
+        addQuestion(q);
+    }
 }

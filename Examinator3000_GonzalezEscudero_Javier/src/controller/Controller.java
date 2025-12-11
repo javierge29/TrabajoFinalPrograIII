@@ -4,6 +4,7 @@ import model.Examen;
 import model.Model;
 import model.Question;
 import model.QuestionBackupIOException;
+import model.QuestionCreatorException;
 import model.RepositoryException;
 import view.BaseView;
 import java.util.List;
@@ -75,4 +76,20 @@ public class Controller {
     public Examen crearExamen(String tema, int n) throws RepositoryException{
         return model.crearExamen(tema, n);
     }
+
+    public boolean hasQuestionCreator(){
+        return model.hasQuestionCreator();
+    }
+
+    public List<String> getQuestionCreatorDescripcion() {
+    return model.getQuestionCreatorDescripcion();
+}
+
+public Question generarPregunta(String topic, int index) throws QuestionCreatorException, RepositoryException {
+    return model.generarPregunta(topic, index);
+}
+
+public void addGeneratedQuestion(Question q) throws RepositoryException {
+    model.addGeneratedQuestion(q);
+}
 }

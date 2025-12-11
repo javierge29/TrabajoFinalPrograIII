@@ -10,6 +10,7 @@ import model.Examen;
 import model.Option;
 import model.Question;
 import model.QuestionBackupIOException;
+import model.QuestionCreatorException;
 import model.RepositoryException;
 
 public class InteractiveView extends BaseView{
@@ -24,6 +25,9 @@ public class InteractiveView extends BaseView{
             showMessage("1. CRUD Preguntas");
             showMessage("2. Exportar/Importar archivo .JSON");
             showMessage("3. Modo examen");
+            //if(controller.hasQuestionCreator()){
+                showMessage("4. Crear pregunta automática");
+            //}
             showMessage("0. Salir");
             
             int opc=leerInt("Elegir opción:");
@@ -37,6 +41,12 @@ public class InteractiveView extends BaseView{
                 case 3:
                     modoExamen();
                     break;
+                case 4:
+                    if(controller.hasQuestionCreator()){
+                        crearPreguntaAutomática();
+                    }else{
+                        showErrorMessage("Opcion no disponible");
+                    }
                 case 0:
                     ejec=false;
                     break;
@@ -147,6 +157,36 @@ public class InteractiveView extends BaseView{
             showMessage("No contestadas: " + examen.getEnBlanco());
             showMessage("Tiempo: " + examen.getTiempo() + " segundos");
         } catch (RepositoryException | IllegalArgumentException e) {
+            showErrorMessage(e.getMessage());
+        }
+    }
+
+    private void crearPreguntaAutomática(){
+        try {
+            List<String> desc=controller.getQuestionCreatorDescripcion();
+            showMessage("Creadores disponibles:");
+            for(int i=0;i<desc.size();i++){
+                showMessage((i+1) + ". "+ desc.get(i));
+            }
+            int indice=leerInt("Elige Creador (0 para volver): ") -1;
+            if(indice>=0 && indice<desc.size()){
+                String tema=leerString("Tema para generar la pregunta: ");
+                Question q=controller.generarPregunta(tema, indice);
+                showMessage("Pregunta generada:");
+                showMessage(q.toString());
+                showMessage("Opciones");
+                for(Option opc : q.getOpcion()){
+                    showMessage("- " + opc.toString());
+                }
+                boolean confirmar=leerBooleano("Añadir al banco de preguntas? (true/false): ");
+                if(confirmar){
+                    controller.addGeneratedQuestion(q);
+                    showMessage("Pregunta añadida");
+                }else{
+                    showMessage("Pregunta no añadida");
+                }
+            }
+        } catch (QuestionCreatorException | RepositoryException e) {
             showErrorMessage(e.getMessage());
         }
     }
